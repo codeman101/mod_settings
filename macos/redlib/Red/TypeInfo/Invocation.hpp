@@ -64,7 +64,7 @@ inline bool CallFunction(CBaseFunction* aFunc, IScriptable* aContext, Args&&... 
     if (!aFunc)
         return false;
 
-    const auto combinedArgCount = aFunc->params.size + (aFunc->returnType ? 1 : 0);
+    const auto combinedArgCount = aFunc->params.Size() + (aFunc->returnType ? 1 : 0);
 
     if (combinedArgCount != sizeof...(Args))
         return false;
@@ -93,7 +93,7 @@ inline bool CallFunction(CBaseFunction* aFunc, IScriptable* aContext, Args&&... 
                 return false;
             }
 
-            if (aFunc->params.size)
+            if (aFunc->params.Size())
             {
                 stack.args = args.data() + 1;
             }
@@ -103,11 +103,11 @@ inline bool CallFunction(CBaseFunction* aFunc, IScriptable* aContext, Args&&... 
             stack.args = args.data();
         }
 
-        if (aFunc->params.size)
+        if (aFunc->params.Size())
         {
-            stack.argsCount = aFunc->params.size;
+            stack.argsCount = aFunc->params.Size();
 
-            for (uint32_t i = 0; i < aFunc->params.size; ++i)
+            for (uint32_t i = 0; i < aFunc->params.Size(); ++i)
             {
                 if (!Red::IsCompatible(aFunc->params[i]->type, stack.args[i].type, stack.args[i].value))
                 {

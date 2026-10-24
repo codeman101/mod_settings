@@ -15,8 +15,8 @@ public:
 
   // custom virtuals
   virtual void __fastcall GetValueToWrite(char *value) = 0;
-  virtual RED4ext::ScriptInstance *__fastcall GetRequestedValue() = 0;
-  virtual RED4ext::ScriptInstance *__fastcall GetAcceptedValue() = 0;
+  virtual void* *__fastcall GetRequestedValue() = 0;
+  virtual void* *__fastcall GetAcceptedValue() = 0;
   virtual void __fastcall SetDefaultValue(void *value) = 0;
 
   RED4ext::CName modName;

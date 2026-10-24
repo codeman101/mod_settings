@@ -8,7 +8,7 @@
 #include "RED4ext/CName.hpp"
 #include "RED4ext/DynArray.hpp"
 #include <RED4ext/Common.hpp>
-#include <RED4ext/InstanceType.hpp> // ScriptInstance (the Windows fork headers got it through other includes)
+#include <RED4ext/InstanceType.hpp> // void* (the Windows fork headers got it through other includes)
 #include <stdint.h>
 
 namespace RED4ext
@@ -127,7 +127,7 @@ struct RuntimeSettingsVar
     // The body keeps the fork's behaviour: release the display-key array, never free the object itself.
     virtual ~RuntimeSettingsVar()
     {
-        if (displayNameKeys.capacity)
+        if (displayNameKeys.Capacity())
         {
             displayNameKeys.Clear();
         }

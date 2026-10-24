@@ -27,12 +27,12 @@ static_assert(sizeof(MacTextView) == 0x10, "passed in two registers");
 
 // ITypeInfo::FromString. The Windows (fork) SDK takes the text as a RawBuffer; call sites go through here. The Windows branch is the
 // original code, unchanged.
-inline bool FromString(RED4ext::CBaseRTTIType * type, RED4ext::ScriptInstance instance, const RED4ext::CString& str) {
+inline bool FromString(RED4ext::CBaseRTTIType * type, void* instance, const RED4ext::CString& str) {
 #ifdef __APPLE__
   // The Mac SDK declares the text as const CString&, which passes the CString's address in x2 and leaves x3 (the length) unset: the
   // game then reads a garbage length (2026-10-13: a saved key binding, "IK_None", ran the enum parser off the end of the stack). Same
   // vtable slot as the SDK's declaration, called with the game's argument type.
-  using FromStringFn = bool (RED4ext::CBaseRTTIType::*)(RED4ext::ScriptInstance, MacTextView) const;
+  using FromStringFn = bool (RED4ext::CBaseRTTIType::*)(void*, MacTextView) const;
   const auto fromString = reinterpret_cast<FromStringFn>(&RED4ext::CBaseRTTIType::FromString);
   return (type->*fromString)(instance, MacTextView{str.c_str(), str.Length()});
 #else

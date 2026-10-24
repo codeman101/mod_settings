@@ -131,12 +131,12 @@ template <typename T> struct RuntimeVariable : public IRuntimeVariable {
 
   virtual void __fastcall GetValueToWrite(char *value) override;
 
-  virtual inline RED4ext::ScriptInstance *__fastcall GetRequestedValue() override {
-    return (RED4ext::ScriptInstance *)&requestedValue;
+  virtual inline void* *__fastcall GetRequestedValue() override {
+    return (void* *)&requestedValue;
   }
 
-  virtual inline RED4ext::ScriptInstance *__fastcall GetAcceptedValue() override {
-    return (RED4ext::ScriptInstance *)&acceptedValue;
+  virtual inline void* *__fastcall GetAcceptedValue() override {
+    return (void* *)&acceptedValue;
   }
 
   virtual inline void __fastcall SetDefaultValue(void *value) override { 

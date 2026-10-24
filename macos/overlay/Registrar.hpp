@@ -17,10 +17,10 @@
 #include "MacShims.hpp"
 
 struct ModModule {
-  virtual void Load(const RED4ext::Sdk *aSdk, RED4ext::PluginHandle aHandle){};
+  virtual void Load(const RED4ext::v1::Sdk *aSdk, RED4ext::v1::PluginHandle aHandle){};
   virtual void RegisterTypes(){};
   virtual void PostRegisterTypes(){};
-  virtual void Unload(const RED4ext::Sdk *aSdk, RED4ext::PluginHandle aHandle){};
+  virtual void Unload(const RED4ext::v1::Sdk *aSdk, RED4ext::v1::PluginHandle aHandle){};
 };
 
 class IModModuleHook : ModModule {
@@ -32,13 +32,13 @@ public:
   bool m_sharedWithCodeware = false;
   ModSettingsMac::HookResult m_result = ModSettingsMac::HookResult::Refused;
 
-  virtual void Load(const RED4ext::Sdk *aSdk, RED4ext::PluginHandle aHandle) override {
+  virtual void Load(const RED4ext::v1::Sdk *aSdk, RED4ext::v1::PluginHandle aHandle) override {
     (void)aSdk;
     (void)aHandle;
     m_result = ModSettingsMac::AttachHook(m_name.c_str(), m_address, m_hook, m_original, m_sharedWithCodeware);
   };
 
-  virtual void Unload(const RED4ext::Sdk *aSdk, RED4ext::PluginHandle aHandle) override {
+  virtual void Unload(const RED4ext::v1::Sdk *aSdk, RED4ext::v1::PluginHandle aHandle) override {
     (void)aSdk;
     (void)aHandle;
     ModSettingsMac::DetachHook(m_name.c_str(), m_address, m_result);
@@ -46,8 +46,8 @@ public:
 };
 
 class ModModuleFactory {
-  std::vector<std::function<void(const RED4ext::Sdk *, RED4ext::PluginHandle)>> s_loads;
-  std::vector<std::function<void(const RED4ext::Sdk *, RED4ext::PluginHandle)>> s_unloads;
+  std::vector<std::function<void(const RED4ext::v1::Sdk *, RED4ext::v1::PluginHandle)>> s_loads;
+  std::vector<std::function<void(const RED4ext::v1::Sdk *, RED4ext::v1::PluginHandle)>> s_unloads;
   std::vector<std::function<void()>> s_registers;
   std::vector<std::function<void()>> s_postRegisters;
   std::vector<IModModuleHook *> s_hooks;
@@ -60,9 +60,9 @@ public:
 
   template <class T> void registerClass(const std::string &name) {
     s_loads.emplace_back(
-        [](const RED4ext::Sdk *aSdk, RED4ext::PluginHandle aHandle) -> void { (new T())->Load(aSdk, aHandle); });
+        [](const RED4ext::v1::Sdk *aSdk, RED4ext::v1::PluginHandle aHandle) -> void { (new T())->Load(aSdk, aHandle); });
     s_unloads.emplace_back(
-        [](const RED4ext::Sdk *aSdk, RED4ext::PluginHandle aHandle) -> void { (new T())->Unload(aSdk, aHandle); });
+        [](const RED4ext::v1::Sdk *aSdk, RED4ext::v1::PluginHandle aHandle) -> void { (new T())->Unload(aSdk, aHandle); });
     s_registers.emplace_back([]() -> void { (new T())->RegisterTypes(); });
     s_postRegisters.emplace_back([]() -> void { (new T())->PostRegisterTypes(); });
   }
@@ -71,7 +71,7 @@ public:
     s_hooks.emplace_back(moduleHook);
   }
 
-  void Load(const RED4ext::Sdk *aSdk, RED4ext::PluginHandle aHandle) {
+  void Load(const RED4ext::v1::Sdk *aSdk, RED4ext::v1::PluginHandle aHandle) {
     for (const auto &load : s_loads) {
       load(aSdk, aHandle);
     }
@@ -81,7 +81,7 @@ public:
     }
   }
 
-  void Unload(const RED4ext::Sdk *aSdk, RED4ext::PluginHandle aHandle) {
+  void Unload(const RED4ext::v1::Sdk *aSdk, RED4ext::v1::PluginHandle aHandle) {
     for (const auto &unload : s_unloads) {
       unload(aSdk, aHandle);
     }

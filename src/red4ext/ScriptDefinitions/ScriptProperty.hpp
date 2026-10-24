@@ -46,7 +46,7 @@ struct ScriptProperty : ScriptDefinition {
     return RED4ext::CRTTISystem::Get()->GetType(this->type->name);
   }
 
-  void FromString(RED4ext::ScriptInstance pointer, const RED4ext::CString& str) const {
+  void FromString(void* pointer, const RED4ext::CString& str) const {
 #ifdef __APPLE__
     auto *type = this->GetType();
     if (type && type->GetName() == RED4ext::CName("Bool")) {
@@ -235,8 +235,8 @@ struct ScriptProperty : ScriptDefinition {
     }
   }
 
-  void ReadDefaultValue(RED4ext::ScriptInstance pointer) const {
-    if (this->defaultValues.size) {
+  void ReadDefaultValue(void* pointer) const {
+    if (this->defaultValues.Size()) {
       this->FromString(pointer, this->defaultValues[0]);
     }
 #ifdef __APPLE__

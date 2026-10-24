@@ -18,8 +18,13 @@
 #include <CNames.hpp>
 
 namespace ModSettings {
+#if defined(__APPLE__)
+const RED4ext::v1::Sdk *sdk;
+RED4ext::v1::PluginHandle pluginHandle;
+#else
 const RED4ext::Sdk *sdk;
 RED4ext::PluginHandle pluginHandle;
+#endif
 } // namespace ModSettings
 
 #ifndef __APPLE__
@@ -33,10 +38,19 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
 }
 #endif
 
+#if defined(__APPLE__)
+RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::v1::PluginHandle aHandle, RED4ext::v1::EMainReason aReason,
+                                        const RED4ext::v1::Sdk *aSdk) {
+#else
 RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::PluginHandle aHandle, RED4ext::EMainReason aReason,
                                         const RED4ext::Sdk *aSdk) {
+#endif
   switch (aReason) {
+#if defined(__APPLE__)
+  case RED4ext::v1::EMainReason::Load: {
+#else
   case RED4ext::EMainReason::Load: {
+#endif
     ModSettings::sdk = aSdk;
     ModSettings::pluginHandle = aHandle;
 #ifdef __APPLE__
@@ -101,7 +115,11 @@ RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::PluginHandle aHandle, RED4ext::
 
     break;
   }
+#if defined(__APPLE__)
+  case RED4ext::v1::EMainReason::Unload: {
+#else
   case RED4ext::EMainReason::Unload: {
+#endif
     aSdk->logger->Info(aHandle, "Shutting down");
     ModModuleFactory::GetInstance().Unload(aSdk, aHandle);
     break;
@@ -111,6 +129,18 @@ RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::PluginHandle aHandle, RED4ext::
   return true;
 }
 
+#if defined(__APPLE__)
+RED4EXT_C_EXPORT void RED4EXT_CALL Query(RED4ext::v1::PluginInfo *aInfo) {
+  aInfo->name = L"Mod Settings";
+  aInfo->author = L"Jack Humbert";
+  aInfo->version = RED4EXT_V1_SEMVER(MOD_VERSION_MAJOR, MOD_VERSION_MINOR, MOD_VERSION_PATCH);
+  // aInfo->runtime = RED4EXT_V1_RUNTIME_VERSION_LATEST;
+  aInfo->runtime = RED4EXT_V1_RUNTIME_VERSION_INDEPENDENT;
+  aInfo->sdk = RED4EXT_V1_SDK_VERSION_1_0_0_COMPAT_0_5_0;
+}
+
+RED4EXT_C_EXPORT uint32_t RED4EXT_CALL Supports() { return RED4EXT_API_VERSION_1_COMPAT_0; }
+#else
 RED4EXT_C_EXPORT void RED4EXT_CALL Query(RED4ext::PluginInfo *aInfo) {
   aInfo->name = L"Mod Settings";
   aInfo->author = L"Jack Humbert";
@@ -121,3 +151,4 @@ RED4EXT_C_EXPORT void RED4EXT_CALL Query(RED4ext::PluginInfo *aInfo) {
 }
 
 RED4EXT_C_EXPORT uint32_t RED4EXT_CALL Supports() { return RED4EXT_API_VERSION_LATEST; }
+#endif

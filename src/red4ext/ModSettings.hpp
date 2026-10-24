@@ -11,8 +11,13 @@ struct UserMapping;
 
 namespace ModSettings {
 
+#if defined(__APPLE__)
+extern const RED4ext::v1::Sdk *sdk;
+extern RED4ext::v1::PluginHandle pluginHandle;
+#else
 extern const Sdk *sdk;
 extern PluginHandle pluginHandle;
+#endif
 
 struct ScriptData;
 
@@ -30,7 +35,7 @@ public:
 
   static void ProcessScriptData(const ScriptData *scriptData);
   static bool GetSettingString(CName, CName, CString *);
-  static void ReadValueFromFile(ScriptProperty *prop, ScriptInstance pointer);
+  static void ReadValueFromFile(ScriptProperty *prop, void* pointer);
 
   template <typename T>
   static void ReadValueFromFile(CName className, CName propertyName,

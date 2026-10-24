@@ -131,7 +131,7 @@ bool ModVariable::CreateRuntimeVariable(const Variable &var) {
       this->runtimeVar = new RuntimeVariableBool(var.modName, var.className, var.propertyName, CNamePool::Add(var.displayName), CNamePool::Add(var.description), var.order, var.defaultValue.b);
       return true;
     case CName("EInputKey"):
-      // keyCls->ToString((ScriptInstance)var.defaultValue.u32, keyString);
+      // keyCls->ToString((void*)var.defaultValue.u32, keyString);
       this->runtimeVar = new RuntimeVariableKeyBinding(var.modName, var.className, var.propertyName, CNamePool::Add(var.displayName), CNamePool::Add(var.description), var.order, (EInputKey)var.defaultValue.u32); //CNamePool::Add(keyString));
       return true;
     // not supported in the UI yet
@@ -223,9 +223,9 @@ void ModClass::RegisterCallback(std::shared_ptr<runtime_class_callback_t> &callb
   }
 }
 
-void ModClass::SetDefaultValue(CName propertyName, ScriptInstance* value) const {
+void ModClass::SetDefaultValue(CName propertyName, void** value) const {
   if (this->type) {
-      for (auto i = 0; i < this->type->defaults.keys.size; i++) {
+      for (auto i = 0; i < this->type->defaults.keys.Size(); i++) {
         if (this->type->defaults.keys[i] == propertyName) {
           // sdk->logger->InfoF(pluginHandle, "Loaded %s.%s", this->name.ToString(), propertyName.ToString());
           auto propType = this->type->defaults.values[i]->GetType();

@@ -16,8 +16,8 @@
 
 namespace
 {
-const RED4ext::Sdk* g_sdk = nullptr;
-RED4ext::PluginHandle g_handle = nullptr;
+const RED4ext::v1::Sdk* g_sdk = nullptr;
+RED4ext::v1::PluginHandle g_handle = nullptr;
 
 // Any address inside this dylib will do for dladdr.
 void ModuleMarker() {}
@@ -58,18 +58,18 @@ void Emit(Level aLevel, const char* aFormat, va_list aArgs)
 using PeerAttach = bool (*)(uintptr_t aTarget, void* aDetour, void** aOriginal);
 } // namespace
 
-void ModSettingsMac::Init(const RED4ext::Sdk* aSdk, RED4ext::PluginHandle aHandle)
+void ModSettingsMac::Init(const RED4ext::v1::Sdk* aSdk, RED4ext::v1::PluginHandle aHandle)
 {
     g_sdk = aSdk;
     g_handle = aHandle;
 }
 
-const RED4ext::Sdk* ModSettingsMac::Sdk()
+const RED4ext::v1::Sdk* ModSettingsMac::Sdk()
 {
     return g_sdk;
 }
 
-RED4ext::PluginHandle ModSettingsMac::Handle()
+RED4ext::v1::PluginHandle ModSettingsMac::Handle()
 {
     return g_handle;
 }

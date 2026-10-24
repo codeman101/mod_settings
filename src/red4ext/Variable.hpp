@@ -85,7 +85,7 @@ struct ModClass {
   void RegisterListener(const Handle<IScriptable> &listener);
   void UnregisterListener(const Handle<IScriptable> &listener);
   void RegisterCallback(std::shared_ptr<runtime_class_callback_t> &callback);
-  void SetDefaultValue(CName propertyName, ScriptInstance* value) const;
+  void SetDefaultValue(CName propertyName, void** value) const;
   void NotifyListeners() const;
 
   constexpr operator CName() const noexcept {

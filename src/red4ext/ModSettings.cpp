@@ -395,7 +395,7 @@ bool ModSettings::GetSettingString(CName className, CName propertyName, CString 
   }
 }
 
-void ModSettings::ReadValueFromFile(ScriptProperty *prop, ScriptInstance pointer) {
+void ModSettings::ReadValueFromFile(ScriptProperty *prop, void* pointer) {
   CString settingFromFile;
   if (ModSettings::GetSettingString(prop->parent->name, prop->name, &settingFromFile)) {
     prop->FromString(pointer, settingFromFile);
