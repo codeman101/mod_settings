@@ -86,4 +86,7 @@ bool VaultSelfTest();
 
 // True for the address of a trap stub (macos/MacTrap.cpp): the hash has no Mac address, there is nothing to hook.
 bool IsTrapAddress(uintptr_t aAddress);
+
+// For the public RED4ext-macos loader, which has no Frida script to call modsettings_registerNatives (MacEntry.cpp).
+bool AddNativeRegistrationCallback();
 } // namespace ModSettingsMac

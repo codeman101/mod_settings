@@ -82,6 +82,39 @@ extern "C" __attribute__((visibility("default"))) void modsettings_registerNativ
     ModModuleFactory::GetInstance().Load(sdk, handle);
 }
 
+// The public RED4ext-macos loader (codeman101/RED4ext-macos, mac-2.5) has no Frida script, so nothing calls modsettings_registerNatives.
+// TweakXL, ArchiveXL and Codeware register from the game's RTTI post-register callback there (cp2077-codeware/macos/MacV1Natives.hpp):
+// the first of their callbacks to run calls the three entry points in the Frida script's order. Do the same, and call ours last, so Mod
+// Settings registers after Codeware whatever order the plugins loaded in. Every entry point runs once, so a loader that still calls them
+// itself, or the other plugins' callbacks, make no difference.
+namespace
+{
+void RunNativeRegistration()
+{
+    for (const char* name : {"tweakxl_registerNatives", "archivexl_registerNatives", "codeware_registerNatives"})
+    {
+        if (auto* fn = reinterpret_cast<void (*)()>(ModSettingsMac::AnySymbol(name)))
+        {
+            fn();
+        }
+    }
+    modsettings_registerNatives();
+}
+} // namespace
+
+bool ModSettingsMac::AddNativeRegistrationCallback()
+{
+    auto* rtti = RED4ext::CRTTISystem::Get();
+    if (!rtti)
+    {
+        LogError("no RTTI system at plugin load: modsettings_registerNatives has to be called by the loader");
+        return false;
+    }
+    rtti->AddPostRegisterCallback(&RunNativeRegistration);
+    Log("RTTI post-register callback added: modsettings_registerNatives runs after Codeware's, at script initialisation");
+    return true;
+}
+
 // Diagnostics for the offline smoke test (a plain process that dlopens the dylib): how many RedLib registrars the dylib queued.
 extern "C" __attribute__((visibility("default"))) void modsettings_mac_pending(unsigned long* aRegister, unsigned long* aDescribe)
 {

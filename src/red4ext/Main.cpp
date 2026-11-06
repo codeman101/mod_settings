@@ -94,6 +94,7 @@ RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::PluginHandle aHandle, RED4ext::
     // The rest of the Windows Load (register the RedLib types, register the ArchiveXL archive, attach the hooks) runs later on the Mac, from
     // modsettings_registerNatives (macos/MacEntry.cpp): the game never calls the RTTI register callbacks there, and Codeware has to have
     // installed its hooks before ReleaseScriptData can join them.
+    ModSettingsMac::AddNativeRegistrationCallback();
     ModSettingsMac::Log("loaded; waiting for modsettings_registerNatives (called at script initialisation, after every plugin's Main)");
 #else
     for (auto script : {L"packed.reds", L"module.reds"}) {

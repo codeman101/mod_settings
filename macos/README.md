@@ -25,10 +25,11 @@ Key-binding overrides (`ApplyOverrides`) are wired but have not been exercised i
 ## What you need to run it
 
 - Cyberpunk 2077 2.3.1, the native macOS build (Steam), on Apple Silicon.
-- A RED4ext loader for macOS that calls `modsettings_registerNatives` after `tweakxl_registerNatives`, `archivexl_registerNatives` and
-  `codeware_registerNatives`, at script initialisation. The port was developed on a loader setup that does this from a Frida gadget
-  script. jackmaxwil's public [RED4ext-macos](https://github.com/jackmaxwil/RED4ext-macos) uses the game's post-register callback
-  instead; support for it is planned.
+- A RED4ext loader for macOS. The port was developed on a loader setup that calls `modsettings_registerNatives` from a Frida gadget
+  script, after `tweakxl_registerNatives`, `archivexl_registerNatives` and `codeware_registerNatives`. With the public
+  [RED4ext-macos](https://github.com/codeman101/RED4ext-macos) loader, which has no such script, Mod Settings registers from the game's
+  RTTI post-register callback instead (`AddNativeRegistrationCallback` in `MacEntry.cpp`), after Codeware, the way TweakXL, ArchiveXL
+  and Codeware do it there. Tested on game 2.5.0 with RED4ext-macos 0.3.0.
 - The macOS ports of ArchiveXL and [Codeware](https://github.com/codeman101/cp2077-codeware/tree/macos) (the `ReleaseScriptData`
   hook is chained through Codeware's).
 
